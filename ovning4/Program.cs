@@ -55,12 +55,15 @@ namespace ovning4
                         break;
                     case '2':
                         ExamineQueue();
+                        Console.Clear();
                         break;
                     case '3':
                         ExamineStack();
+                        Console.Clear();
                         break;
                     case '4':
                         CheckParanthesis();
+                        Console.Clear();
                         break;
                     /*
                      * Extend the menu to include the recursive 
@@ -240,18 +243,25 @@ namespace ovning4
                     case 'D':
 
                         //Console.WriteLine(input.Trim('D'));
-                        if (string.IsNullOrEmpty(input.Trim('D')))
+                        if (string.IsNullOrEmpty(input.Trim('D'))&& queuetest.Count!=0)
                         {
                             queuetest.Dequeue();
                             Console.WriteLine("updated Queue:");
                             queuetest.ToList().ForEach(i => Console.WriteLine(i));
+                            Console.WriteLine(queuetest.Count);
+                            break;
+                        }else if(queuetest.Count==0)
+                        {
+                            Console.WriteLine("the queue now is empty please add new name or quit ");
                             break;
                         }
-                            Console.WriteLine("Please Enter a name starts with '+' ,'-' or write 'D' :");
+
+                        Console.WriteLine("Please Enter a name starts with '+' ,'-' or write 'D' :");
                         break;
                     default: // Dequeue or wrong enterd word 
                         if (input[0] == 'Q' && input == "Quit") { keepgoing = false; break; }
                         Console.WriteLine("Please Enter a name starts with '+' ,'-' or write 'D' :");
+                        Console.Clear();
                         break;
                 }
             }
@@ -292,16 +302,129 @@ namespace ovning4
              * Create a switch with cases to push or pop items
              * Make sure to look at the stack after pushing and and poping to see how it behaves
             */
+
+            Console.WriteLine("Print an ICA Stack");
+            
+            var stacktest = new Stack<string>();
+            var customLists = new List<string>();
+            stacktest.Push("CHarlis");
+            stacktest.Push("Greta");
+            stacktest.Push("Kalle");
+            stacktest.Push("Stina");
+            stacktest.Push("ahmad");
+            stacktest.Push("Olle");
+            var reverse = stacktest.Reverse();
+            foreach (var item in reverse)
+            {
+                Console.WriteLine(item);
+            }
+            /*there is no meaning to use Stack for Queue
+             * stack use First in last out and we need first in first out
+             * but stack it is usefull for reverse string or stacking things 
+             */
+            
+            // program to reverse the input from user by using Stack 
+            string input;
+            bool keepgoing = true;
+
+            while(keepgoing)
+            {
+                Console.WriteLine("\nEnter a string of words and I Will print it out Mirrored");
+                Console.WriteLine("For Exit Enter Q");
+                input = Console.ReadLine();
+                if (input=="Q"){keepgoing = false; continue; }
+                var reversStack = new Stack<string>();
+                string[] listinput = input.Split(' ');
+                foreach (var item in listinput)
+                {
+                    reversStack.Push(item);
+                }
+                foreach (var item in reversStack)
+                {
+                    Console.Write(item+" ");
+                }
+                
+              
+            }
         }
 
         static void CheckParanthesis()
         {
             /*
              * Use this method to check if the paranthesis in a string is Correct or incorrect.
-             * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
+             * Example of correct: (()), {}, [({})],     List<int> list = new List<int>() { 1, 2, 3, 4 };
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
              */
+            string input;
+            bool keepgoing = true;
 
+            Console.WriteLine("this progran test if your text is well-formed or not ");
+            while (keepgoing)
+            {
+                Console.WriteLine("please Enter your text: ");
+                Console.WriteLine("you can quit by Enter Q : ");
+                input = Console.ReadLine();
+                if (input == "Q") { keepgoing = false; continue; }
+                var charInput = new List<char>(); // it will contain Parentheses (,{,",[,],{,)
+                var list1 = new List<char>() { '(', '{', '"', '[' };
+                var list2 = new List<char>() { ')', '}', '"', ']' };
+                foreach (var i in input.ToCharArray()) //
+                {
+                    if (list1.Contains(i) || list2.Contains(i)) charInput.Add(i);
+                }
+                //charInput.ForEach(i => Console.WriteLine(i));
+
+                var charstack = new Stack<char>();// will fill it with Parentheses
+                int indexlist2 = 0;/* use it just to know if the input string just from list2 
+                                    *if indexlist2 < 0 after the process the string is not well formed
+                                    */
+
+                foreach (var i in charInput)
+                {
+                    if (list1.Contains(i))
+                    {
+                        indexlist2++;
+                        charstack.Push(i);
+                    }
+                    if (list2.Contains(i))
+                    {
+                        switch (i)
+                        {
+                            case '}':
+                                //if charInput contain just char from list2
+                                //then charstack is Empty.----- input example: ))}}]]
+                                //so no error when I use charstak.Peek() 
+                                //but I need to decrease indexlist2
+                                if (charstack.Count == 0) { indexlist2--; break; }
+                                if (charstack.Peek() == '{') charstack.Pop();
+                                indexlist2--;
+                                break;
+                            case ']':
+                                if (charstack.Count == 0) { indexlist2--; break; }
+                                if (charstack.Peek() == '[') charstack.Pop();
+                                indexlist2--;
+                                break;
+                            case ')':
+                                if (charstack.Count == 0) { indexlist2--; break; }
+                                if (charstack.Peek() == '(') charstack.Pop();
+                                indexlist2--;
+                                break;
+                            case '"':
+                                if (charstack.Count == 0) { indexlist2--; break; }
+                                if (charstack.Peek() == '"') charstack.Pop();
+                                indexlist2--;
+                                break;
+                        }
+                    }
+                }
+                if (charstack.Count == 0 && indexlist2 == 0)
+                {
+                    Console.WriteLine("well-formed");
+                }
+                else Console.WriteLine("Sorry it is not well-formed");
+                
+
+            }
         }
 
 
